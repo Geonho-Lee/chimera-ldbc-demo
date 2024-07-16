@@ -1,11 +1,11 @@
-LOAD 'pg_graph';
-SET SEARCH_PATH=graph_catalog, '$user', public;
-
+/* Q8. Recent replies
+\set personId 933
+ */
 SELECT personId, personFirstName, personLastName, commentCreationDate, 
         commentId, commentContent
 FROM cypher($$
 MATCH (start:person)<-[:message_hascreator_person]-(:message)<-[:message_replyof_message]-(comment:message)-[:message_hascreator_person]->(dest:person)
-WHERE start.vertex_id = 933
+WHERE start.vertex_id = 2199023819768
 RETURN
     dest.vertex_id AS personId,
     dest.firstname AS personFirstName,

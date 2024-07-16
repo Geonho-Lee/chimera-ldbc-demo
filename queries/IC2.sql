@@ -1,6 +1,7 @@
-LOAD 'pg_graph';
-SET SEARCH_PATH=graph_catalog, '$user', public;
-
+/* Q2. Recent messages by your friends
+\set personId 933
+\set maxDate '2010-10-01'
+ */
 SELECT personId,
     personFirstName,
     personLastName,
@@ -9,7 +10,7 @@ SELECT personId,
     postOrCommentCreationDate
 FROM cypher($$
 MATCH (p:person)-[:person_knows_person]->(f:person)<-[:message_hascreator_person]-(m:message)
-WHERE p.vertex_id = 933 AND m.creationdate < '2010-10-16'
+WHERE p.vertex_id = 19791210011791 AND m.creationdate < to_timestamp(1316649600)
 RETURN
     f.vertex_id AS personId,
     f.firstname AS personFirstName,

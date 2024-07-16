@@ -1,28 +1,27 @@
-LOAD 'pg_graph';
-SET SEARCH_PATH=graph_catalog, '$user', public;
-
+/* Q12. Expert search
+\set personId 933
+ */
 SELECT personId,
     personFirstName,
     personLastName,
-    tagNames,
-    replyCount
+    '{tagNames}'::varchar[] AS tagNames,
+    count(distinct commentId) as replyCount
 FROM cypher($$
 MATCH (p:person)-[:person_knows_person]->(friend:person)<-[:message_hascreator_person]-(comment:message)-[:message_replyof_message]->(:message)-[:message_hastag_tag]->(t2:tag)
-WHERE p.vertex_id = 933
+WHERE p.vertex_id = 8796093917072
 RETURN
     friend.vertex_id AS personId,
     friend.firstname AS personFirstName,
     friend.lastname AS personLastName,
-    '{tagNames}' AS tagNames,
-    count(DISTINCT comment) AS replyCount
-ORDER BY
-    count(DISTINCT comment) DESC,
-    friend.vertex_id ASC
-LIMIT 20
+    comment.vertex_id AS commentId
 $$) as (
     personId bigint, 
     personFirstName varchar, 
     personLastName varchar, 
-    tagNames varchar[], 
-    replyCount bigint
-);
+    commentId bigint
+)
+GROUP BY personId, personFirstName, personLastName
+ORDER BY
+    replyCount DESC,
+    personId ASC
+LIMIT 20;
